@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { required } from "zod/mini";
 
 const employeeExpenseSchema = new Schema(
     {
@@ -17,7 +18,9 @@ const employeeExpenseSchema = new Schema(
         },
         notes: {
             type: String,
+            required:true
         },
+
 
         status: {
             type: String,
@@ -26,7 +29,7 @@ const employeeExpenseSchema = new Schema(
         },
         receipt: {
             type: String, // URL to the receipt image
-            r
+            
         },
 
         expenseDate: {

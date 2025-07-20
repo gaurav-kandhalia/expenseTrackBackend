@@ -1,13 +1,16 @@
 import express from 'express'
-// import cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import cors from 'cors'
+import userRouter from './Routes/user.routes.js'
+import employeeRouter from './Routes/employee.routes.js';
 const app = express();
+
 
 app.use(cors({
     origin:process.env.CORS_ORIGIN,
     Credential:true
 }))
-// app.use(cookieParser())
+app.use(cookieParser())
 app.use(express.json({limit:"16kb"}));
 app.use(express.static("public"));
 app.use(express.urlencoded({
@@ -19,6 +22,8 @@ app.use(express.urlencoded({
 app.get('/',(req,res)=>{
     res.send("Welcome to Expense Tracker API")
 })
+app.use('/api/v1/user', userRouter);
+app.use('/api/v1/expense', employeeRouter);
 
 
 
