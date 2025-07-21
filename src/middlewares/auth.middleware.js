@@ -5,9 +5,10 @@ import jwt from "jsonwebtoken"
 
 export const isAuthenticated = asyncHandler(async(req, _, next) => {
     try {
+        console.log("this auth middlware")
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ","")
         
-                    console.log("<<<<<<<<<<<<<<<<<<<<<<first>>>>>>>>>>>>>>>>>>>>>>")
+                   
 
         if (!token) {
             throw new ApiError(401, "Unauthorized request")
@@ -23,6 +24,7 @@ export const isAuthenticated = asyncHandler(async(req, _, next) => {
         }
     
         req.user = user;
+        console.log("-----------------------------------------------auth")
         next()
     } catch (error) {
         throw new ApiError(401, error?.message || "Invalid access token")
