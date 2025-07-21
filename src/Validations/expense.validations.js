@@ -24,3 +24,14 @@ export const updateExpenseSchema = z.object({
     if (typeof arg === "string" || arg instanceof Date) return new Date(arg);
 }, z.date()).optional(),
 })
+
+export const updateExpenseStatusSchema = z.object({
+  expenseId: z.string({
+    required_error: "Expense ID is required",
+    invalid_type_error: "Expense ID must be a string",
+  }),
+
+  status: z.enum(["approved", "rejected"], {
+    required_error: "Status is required and must be 'approved' or 'rejected'",
+  }),
+});
