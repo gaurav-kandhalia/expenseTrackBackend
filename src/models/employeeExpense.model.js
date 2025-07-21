@@ -13,8 +13,9 @@ const employeeExpenseSchema = new Schema(
             required: [true, "Amount is required"]
         },
         category: {
-            type: String,
-            required: [true, "Category is required"],
+           type: Schema.Types.ObjectId,
+            ref: "Category",
+            required: [true, "category Id is required"]
         },
         notes: {
             type: String,
