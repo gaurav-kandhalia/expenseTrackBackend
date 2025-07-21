@@ -36,3 +36,45 @@ export const getAllCategories = asyncHandler(async (req, res) => {
 
   res.status(200).json(new ApiResponse(200, categories, "Categories fetched successfully", true));
 });
+
+
+export const deleteCategory = asyncHandler(async(req,res)=>{
+     const {categoryId} = req.body;
+     if(!categoryId){
+      throw new ApiError(401,"category id is required",false)
+     }
+     const deletedCategory  = await Category.findByIdAndDelete(categoryId);
+     if(!deleteCategory){
+      throw ApiError(404,"category is not found",false)
+     }
+     res.status(201)
+     .json(
+      new ApiResponse(201,{},"category deleted Succcessfully",true)
+     )
+})
+
+export const updateCategory = asyncHandler(async(req,res)=>{
+     const {categoryId,name} = req.body;
+     const updatedBy = req.user._id;
+     
+
+     if(!categoryId){
+      throw new ApiError(404,"categoryId is required",false);
+     }
+
+     const category =  await Category.findById(categoryId);
+     if(!category){
+      throw new ApiError(404,"something went wrong or category does not exists",false)
+     }
+     category.name = name;
+     if(updatedBy && updatedBy===undefined){
+      category.createdBy = updatedBy
+     }
+     await category.save();
+  
+     res.status(201)
+     .json
+     (
+      new ApiResponse(201,category,"category updated successfully",true)
+     )
+})
