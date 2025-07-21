@@ -1,10 +1,10 @@
 
-import { expenseSchema } from "../Validations/expense.validations.js";
+import { expenseSchema,updateExpenseSchema } from "../Validations/expense.validations.js";
 import {asyncHandler} from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import {ApiResponse} from "../utils/apiResponse.js";
 import { EmployeeExpenses } from "../models/employeeExpense.model.js";
-
+import {User} from '../models/user.model.js'
 export const AddExpense = asyncHandler(async(req, res) => {
       const validatedData = expenseSchema.parse(req.body);
       
@@ -17,3 +17,72 @@ export const AddExpense = asyncHandler(async(req, res) => {
         );
 }
 )
+
+export const allExpenses = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized user", false);
+  }
+
+  const expenses = await EmployeeExpenses.find({ userId }).sort({ expenseDate: -1 }); 
+   if(!expenses){
+    res.status(200).json(
+        new ApiResponse(200,{},"no expenses are exists")
+    )
+   }else{
+         res.status(200).json(
+    new ApiResponse(200, expenses, "Expenses fetched successfully")
+  );
+   }
+ 
+});
+
+export const deleteExpense = asyncHandler(async(req,res)=>{
+    const expenseId = req.body;
+    if(!expenseId){
+      throw new ApiError(401,"expenseId is required",false);
+    }
+      const deletedExpense = await EmployeeExpenses.findOneAndDelete({
+        _id: expenseId,
+        userId: req.user._id
+    });
+    if(!deletedExpense){
+      throw new ApiError(404,"expense not found or not authorized to delete");
+    }
+    res.status(200).json(
+      new ApiResponse(200,{},"expense Deleted Successfully",true)
+    )
+})
+
+export const updateExpense = asyncHandler(async(req,res)=>{
+    
+  const validatedData = updateExpenseSchema.parse(req.body);
+ 
+  
+  const expense = await EmployeeExpenses.findById({_id:validatedData.expenseId});
+  if(!expense){
+      throw new ApiError(404,"expense not found or you are unauthorized to update",false)
+  }
+  
+  
+
+  if (validatedData.amount !== undefined) expense.amount = validatedData.amount;
+  if (validatedData.category !== undefined) expense.category = validatedData.category;
+  if (validatedData.notes !== undefined) expense.notes = validatedData.notes;
+  if (validatedData.expenseDate) expense.expenseDate = validatedData.expenseDate;
+  if (validatedData.status && req.user.role === "admin") expense.status = validatedData.status;
+
+   if (req.user.role === "employee" && validatedData.status !==undefined) {
+    throw new ApiError(401, "Unauthorized request to change the status", false);
+  }
+
+  
+   
+   await expense.save();
+   res.status(200).json(
+    new ApiResponse(200,expense,"expense updated successfully",true)
+   )
+
+
+})

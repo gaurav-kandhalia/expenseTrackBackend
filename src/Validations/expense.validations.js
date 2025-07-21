@@ -12,3 +12,15 @@ export const expenseSchema = z.object({
 }, z.date()).optional(),
    
 });
+
+
+export const updateExpenseSchema = z.object({
+    expenseId: z.string().nonempty("expenseId is required"),
+     amount: z.number().positive("Amount must be a positive number").optional(),
+    category: z.string().nonempty("Category is required").optional(),
+    notes: z.string().nonempty().optional(),
+    status: z.enum(["pending", "approved", "rejected"]).optional(),
+     expenseDate: z.preprocess((arg) => {
+    if (typeof arg === "string" || arg instanceof Date) return new Date(arg);
+}, z.date()).optional(),
+})
