@@ -6,7 +6,7 @@ import { Category } from "../../models/category.model.js"
 import {categorySchema} from '../../Validations/category.validation.js'
 
 export const createCategory = asyncHandler(async (req, res) => {
-  console.log("................this is createCategory................");
+  
 
   const validatedData = categorySchema.parse(req.body);
   const createdBy = req.user._id;
@@ -25,4 +25,14 @@ export const createCategory = asyncHandler(async (req, res) => {
   res.status(201).json(
     new ApiResponse(201, category, "Category created successfully", true)
   );
+});
+
+export const getAllCategories = asyncHandler(async (req, res) => {
+  const categories = await Category.find().sort({ createdAt: -1 }); 
+
+  if (!categories || categories.length === 0) {
+    return res.status(404).json(new ApiResponse(404, [], "No categories found", false));
+  }
+
+  res.status(200).json(new ApiResponse(200, categories, "Categories fetched successfully", true));
 });
