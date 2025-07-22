@@ -2,6 +2,7 @@ import { EmployeeExpenses } from "../../models/employeeExpense.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { logAudit } from "../../utils/logAudit.js";
 import { filterExpensesSchema, updateExpenseStatusSchema } from "../../Validations/expense.validations.js";
 
 
@@ -30,6 +31,16 @@ export const updateExpenseStatus = asyncHandler(async(req,res)=>{
    if(!updatedExpense) {
     throw new ApiError(404,"something went wrong",false)
    }
+
+     await logAudit({
+      userId:req.user._id,
+      expenseId:updatedExpense._id,
+      action:"updateStatus",
+      metadata:{
+        oldStatus:"pending",
+        newStatus:updatedExpense.status
+      }
+     })
 
    res.status(201)
    .json(

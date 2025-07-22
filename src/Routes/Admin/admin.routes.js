@@ -6,6 +6,7 @@ import { createCategory, deleteCategory, getAllCategories, updateCategory } from
 import { isAuthenticated } from "../../middlewares/auth.middleware.js";
 import {isAdmin} from '../../middlewares/isAdmin.middleware.js'
 import { filterExpenses, getAllExpenses, getExpenseStats, updateExpenseStatus } from "../../Controllers/adminControllers/expense.controller.js";
+import { getAllAuditLogs } from "../../Controllers/adminControllers/auditLogs.controller.js";
 // category Routes
 adminRouter.post("/addCategory",isAuthenticated,isAdmin,createCategory)
 adminRouter.get("/getAllCategories",isAuthenticated,isAdmin,getAllCategories)
@@ -17,4 +18,5 @@ adminRouter.get("/Expenses",isAuthenticated,isAdmin,getAllExpenses);
 adminRouter.put("/updateStatus",isAuthenticated,isAdmin,updateExpenseStatus)
 adminRouter.post("/filterExpenses",isAuthenticated,isAdmin,filterExpenses);
 adminRouter.get("/getStats",isAuthenticated,isAdmin,getExpenseStats);
+adminRouter.get('/auditLogs',isAuthenticated,isAdmin,getAllAuditLogs)
 export default adminRouter;

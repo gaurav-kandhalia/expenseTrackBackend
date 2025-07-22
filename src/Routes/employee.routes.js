@@ -4,7 +4,8 @@ import { isAuthenticated } from "../middlewares/auth.middleware.js";
 const employeeRouter = Router();
 import { EmployeeExpenses } from "../models/employeeExpense.model.js";
 
-employeeRouter.post("/addExpense", isAuthenticated, AddExpense);
+employeeRouter.post("/addExpense", isAuthenticated,upload.fields(
+    {name:"reciept"}), AddExpense);
 employeeRouter.get("/allExpenses",isAuthenticated,allExpenses)
 employeeRouter.delete("/deleteExpense",isAuthenticated,deleteExpense)
 employeeRouter.put("/updateExpense",isAuthenticated,updateExpense)
