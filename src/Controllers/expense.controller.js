@@ -5,13 +5,35 @@ import { ApiError } from "../utils/apiError.js";
 import {ApiResponse} from "../utils/apiResponse.js";
 import { EmployeeExpenses } from "../models/employeeExpense.model.js";
 import {User} from '../models/user.model.js'
+import { logAudit } from "../utils/logAudit.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 export const AddExpense = asyncHandler(async(req, res) => {
       const validatedData = expenseSchema.parse(req.body);
-      
+
+       const recieptLocalPath = req.files?.reciept[0]?.path;
+       
+       if(recieptLocalPath){
+          const reciept = await uploadOnCloudinary(recieptLocalPath)
+        
+        validatedData.receipt = reciept?.url;
+       }
+         
       const expense = await EmployeeExpenses.create(validatedData);
+      
         if (!expense) {
             throw new ApiError(400, "Expense creation failed");
         }
+        await logAudit({
+  userId: req.user._id,
+  expenseId: expense._id,
+  action: "createExpense",
+  metadata:{
+    amount:expense.amount,
+    category:expense.category,
+    notes:expense.notes,
+    status:expense.status
+  }
+});
         res.status(201).json(
             new ApiResponse(201, "Expense created successfully", expense)
         );

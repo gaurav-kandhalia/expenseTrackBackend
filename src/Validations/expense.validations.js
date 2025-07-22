@@ -2,7 +2,7 @@ import {z} from "zod";
 
 export const expenseSchema = z.object({
     userId: z.string().nonempty("User ID is required"),
-    amount: z.number().positive("Amount must be a positive number"),
+    amount: z.coerce.number().positive("Amount must be a positive number"),
     category: z.string().nonempty("Category is required"),
     notes: z.string().nonempty(),
     status: z.enum(["pending", "approved", "rejected"]).default("pending"),
@@ -16,7 +16,7 @@ export const expenseSchema = z.object({
 
 export const updateExpenseSchema = z.object({
     expenseId: z.string().nonempty("expenseId is required"),
-     amount: z.number().positive("Amount must be a positive number").optional(),
+     amount: z.coerce.number().positive("Amount must be a positive number").optional(),
     category: z.string().nonempty("Category is required").optional(),
     notes: z.string().nonempty().optional(),
     status: z.enum(["pending", "approved", "rejected"]).optional(),
