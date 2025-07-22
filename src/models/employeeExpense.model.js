@@ -29,11 +29,11 @@ const employeeExpenseSchema = new Schema(
             default: "pending"
         },
         receipt: {
-            type: String, // URL to the receipt image
+            type: String, 
             
         },
 
-        expenseDate: {
+        createdAt: {
             type: Date,
             default: Date.now
         }

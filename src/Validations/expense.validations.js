@@ -7,7 +7,7 @@ export const expenseSchema = z.object({
     notes: z.string().nonempty(),
     status: z.enum(["pending", "approved", "rejected"]).default("pending"),
     receipt: z.string().optional(), // URL or path to the uploaded receipt file (image or CSV)
-    expenseDate: z.preprocess((arg) => {
+    createdAt: z.preprocess((arg) => {
     if (typeof arg === "string" || arg instanceof Date) return new Date(arg);
 }, z.date()).optional(),
    
@@ -20,7 +20,7 @@ export const updateExpenseSchema = z.object({
     category: z.string().nonempty("Category is required").optional(),
     notes: z.string().nonempty().optional(),
     status: z.enum(["pending", "approved", "rejected"]).optional(),
-     expenseDate: z.preprocess((arg) => {
+     createdAt: z.preprocess((arg) => {
     if (typeof arg === "string" || arg instanceof Date) return new Date(arg);
 }, z.date()).optional(),
 })
@@ -34,4 +34,12 @@ export const updateExpenseStatusSchema = z.object({
   status: z.enum(["approved", "rejected"], {
     required_error: "Status is required and must be 'approved' or 'rejected'",
   }),
+});
+
+export const filterExpensesSchema = z.object({
+  status: z.enum(["approved", "pending", "rejected"]).optional(),
+  category: z.string().optional(),      
+  employeeId: z.string().optional(),    
+  from: z.string().optional(),           
+  to: z.string().optional(),             
 });

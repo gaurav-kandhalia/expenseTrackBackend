@@ -25,7 +25,7 @@ export const allExpenses = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Unauthorized user", false);
   }
 
-  const expenses = await EmployeeExpenses.find({ userId }).sort({ expenseDate: -1 }); 
+  const expenses = await EmployeeExpenses.find({ userId }).sort({ createdAt: -1 }); 
    if(!expenses){
     res.status(200).json(
         new ApiResponse(200,{},"no expenses are exists")
@@ -70,7 +70,7 @@ export const updateExpense = asyncHandler(async(req,res)=>{
   if (validatedData.amount !== undefined) expense.amount = validatedData.amount;
   if (validatedData.category !== undefined) expense.category = validatedData.category;
   if (validatedData.notes !== undefined) expense.notes = validatedData.notes;
-  if (validatedData.expenseDate) expense.expenseDate = validatedData.expenseDate;
+  if (validatedData.createdAt) expense.createdAt = validatedData.createdAt;
   if (validatedData.status && req.user.role === "admin") expense.status = validatedData.status;
 
    if (req.user.role === "employee" && validatedData.status !==undefined) {
