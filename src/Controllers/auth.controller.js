@@ -121,6 +121,64 @@ status(200)
 
 })
 
+// export const loginController = asyncHandler(async (req, res, next) => {
+//   try {
+//     // Validate input
+//     const validatedData = loginSchema.parse(req.body);
+
+//     // Find user
+//     const user = await User.findOne({ email: validatedData.email });
+//     if (!user) {
+//       throw new ApiError(401, "Invalid user credentials");
+//     }
+
+//     // Compare password
+//     const isPasswordValid = await user.comparePassword(validatedData.password);
+//     if (!isPasswordValid) {
+//       throw new ApiError(401, "Invalid user credentials");
+//     }
+
+//     // Generate tokens
+//     const { accessToken, refreshToken } = await generateAccessandRefreshTokens(user._id);
+
+//     // Remove sensitive info
+//     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
+
+//     // Set cookies
+//     const options = {
+//       secure: true,
+//       httpOnly: true,
+//     };
+
+//     // Send response
+//     res
+//       .status(200)
+//       .cookie("accessToken", accessToken, options)
+//       .cookie("refreshToken", refreshToken, options)
+//       .json(
+//         new ApiResponse(
+//           200,
+//           {
+//             user: loggedInUser,
+//             accessToken,
+//             refreshToken,
+//           },
+//           "User logged in successfully"
+//         )
+//       );
+//   } catch (error) {
+//     // Check if Zod error
+//     if (error.name === "ZodError") {
+//       return res.status(400).json({
+//         success: false,
+//         message: error.issues?.[0]?.message || "Validation failed",
+//         error: error.issues,
+//       });
+//     }
+//     next(error); // Other errors
+//   }
+// });
+
 export const logoutController = asyncHandler(async (req, res) => {
     // Clear the access and refresh tokens from cookies
   const user = await User.findById(req.user._id);
@@ -133,6 +191,32 @@ export const logoutController = asyncHandler(async (req, res) => {
 
   // Respond with a success message
   res.json(new ApiResponse(200, {}, "User logged out successfully"));
+});
+
+
+export const refreshAccessToken = asyncHandler(async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    throw new ApiError(401, "Refresh token missing");
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+  } catch (err) {
+    throw new ApiError(403, "Invalid refresh token");
+  }
+
+  const user = await User.findById(decoded._id);
+  if (!user || user.refreshToken !== refreshToken) {
+    throw new ApiError(403, "Token mismatch or user not found");
+  }
+
+  const newAccessToken = user.generateAccessToken();
+  res.status(200).json(
+    new ApiResponse(200,{accessToken: newAccessToken}, "Access token refreshed successfully",true)
+  );
 });
 
 
