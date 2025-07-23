@@ -36,7 +36,7 @@ export const AddExpense = asyncHandler(async(req, res) => {
   }
 });
         res.status(201).json(
-            new ApiResponse(201, "Expense created successfully", expense)
+            new ApiResponse(201, expense, "Expense created successfully", true)
         );
 }
 )
