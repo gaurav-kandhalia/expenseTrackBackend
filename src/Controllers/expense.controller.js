@@ -7,6 +7,7 @@ import { EmployeeExpenses } from "../models/employeeExpense.model.js";
 import {User} from '../models/user.model.js'
 import { logAudit } from "../utils/logAudit.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { Category } from "../models/category.model.js";
 export const AddExpense = asyncHandler(async(req, res) => {
       const validatedData = expenseSchema.parse(req.body);
 
@@ -47,7 +48,9 @@ export const allExpenses = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Unauthorized user", false);
   }
 
-  const expenses = await EmployeeExpenses.find({ userId }).sort({ createdAt: -1 }); 
+  const expenses = await EmployeeExpenses.find({ userId }).sort({ createdAt: -1 })
+  .populate("category", "name");
+  ; 
    if(!expenses){
     res.status(200).json(
         new ApiResponse(200,{},"no expenses are exists")
@@ -107,4 +110,14 @@ export const updateExpense = asyncHandler(async(req,res)=>{
    )
 
 
+})
+
+export const getCategories = asyncHandler(async(req,res)=>{
+     const categories = await Category.find();
+    if(!categories || categories.length === 0){
+        throw new ApiError(404,"No categories found",false);
+    }
+    res.status(200).json(
+        new ApiResponse(200,categories,"Categories fetched successfully",true)
+    )
 })

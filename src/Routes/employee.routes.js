@@ -1,5 +1,5 @@
 import Router from "express";
-import { AddExpense,allExpenses,deleteExpense,updateExpense } from "../Controllers/expense.controller.js";
+import { AddExpense,allExpenses,deleteExpense,getCategories,updateExpense } from "../Controllers/expense.controller.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
 const employeeRouter = Router();
 import { EmployeeExpenses } from "../models/employeeExpense.model.js";
@@ -9,5 +9,6 @@ employeeRouter.post("/addExpense", isAuthenticated,upload.fields([{ name: "recie
 employeeRouter.get("/allExpenses",isAuthenticated,allExpenses)
 employeeRouter.delete("/deleteExpense",isAuthenticated,deleteExpense)
 employeeRouter.put("/updateExpense",isAuthenticated,updateExpense)
+employeeRouter.get("/getCategories",isAuthenticated,getCategories);
 
 export default employeeRouter;
