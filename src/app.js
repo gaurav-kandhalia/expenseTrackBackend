@@ -4,14 +4,14 @@ import cors from 'cors'
 import morgan from 'morgan';
 import userRouter from './Routes/user.routes.js'
 import employeeRouter from './Routes/employee.routes.js';
-import adminRouter from './Routes/Admin/admin.routes.js';
+import adminRouter from './Routes/admin/admin.routes.js';
 
 const app = express();
 
 app.use(morgan("dev"))
 app.use(cors({
     origin:process.env.CORS_ORIGIN,
-    Credential:true
+    credentials:true
 }))
 app.use(cookieParser())
 app.use(express.json({limit:"16kb"}));
