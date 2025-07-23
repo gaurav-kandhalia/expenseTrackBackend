@@ -29,10 +29,11 @@ app.use('/api/v1/user', userRouter);
 app.use('/api/v1/expense', employeeRouter);
 app.use('/api/v1/admin',adminRouter)
 
-
-
-
-
-
-
 export {app}
+
+app.use((err, req, res, next) => {
+  res.json({
+    success: false,
+    error: err.message,
+  });
+});
