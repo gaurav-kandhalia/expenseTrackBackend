@@ -11,7 +11,7 @@ import { Category } from "../models/category.model.js";
 export const AddExpense = asyncHandler(async(req, res) => {
       const validatedData = expenseSchema.parse(req.body);
 
-       const recieptLocalPath = req.files?.reciept[0]?.path;
+       const recieptLocalPath = req.files?.receipt[0]?.path;
        
        if(recieptLocalPath){
           const reciept = await uploadOnCloudinary(recieptLocalPath)

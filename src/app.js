@@ -35,7 +35,7 @@ app.use((err, req, res, next) => {
  if (err.name === "ZodError") {
     return res.status(400).json({
       success: false,
-      message: "Validation error",
+      message: err.errors?.[0]?.message || err.message || "Validation error",
       errors: err.errors || [],
     });
 
